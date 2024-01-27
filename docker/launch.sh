@@ -47,7 +47,12 @@ if [ "$arg_jupyter" -ne "0" ]; then
     extra_args+=" -p $arg_jupyter:$arg_jupyter"
 fi
 
-docker_args="$extra_args -v ${PWD}:/workspace/TensorRT --rm -it $arg_tag:latest"
+docker_args="$extra_args --volume /var/lib/nvidia/lib64:/usr/local/nvidia/lib64 \
+  --volume /var/lib/nvidia/bin:/usr/local/nvidia/bin \
+  --device /dev/nvidia0:/dev/nvidia0 \
+  --device /dev/nvidia-uvm:/dev/nvidia-uvm \
+  --device /dev/nvidiactl:/dev/nvidiactl \
+  --rm -it $arg_tag:latest"
 
 if [ "$arg_jupyter" -ne "0" ]; then
     docker_args+=" jupyter-lab --port=$arg_jupyter --no-browser --ip 0.0.0.0 --allow-root"
